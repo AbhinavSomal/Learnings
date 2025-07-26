@@ -1,45 +1,88 @@
-📚 🗓️ Week 1: Java Basics + Arrays
-✅ Java Basics – Theory Questions
-Explain the differences between int[] arr = new int[5]; and int[] arr = {1, 2, 3, 4, 5};. When would you use each?
+Week 1 – Java Basics & Arrays: Theory Q&A
+Difference between int[] arr = new int[5]; and int[] arr = {1,2,3,4,5};:
+The first allocates an array of size 5 with default values (0 for ints), while the second initializes the array with specified contents. Use the first when the size is known but values will be set later; use the second for literal initialization.
 
-What are the different types of loops in Java? Describe with syntax and flow control.
+Types of loops in Java:
 
-What are primitive vs non-primitive data types in Java? Give 3 examples of each.
+for (init; cond; update)
 
-How does memory allocation for arrays in Java work? Explain stack vs heap with respect to arrays.
+while (cond)
 
-What is the difference between pass-by-value and pass-by-reference in Java? How does Java handle method parameters?
+do { } while (cond)
+for is best when iteration count is known; while for unknown, and do-while for executions at least once.
 
-✅ Arrays & Control Flow – Theory Questions
-Explain the concept of time complexity using an example of linear vs binary search.
+Primitive vs non-primitive data types:
+Primitive include int, boolean, char with default values (e.g. boolean default=false) 
+baeldung.com
+. Non-primitives include String, arrays, objects—they are references stored on heap.
 
-What are the edge cases to consider when working with arrays (e.g., empty array, out of bounds, null)?
+Stack vs Heap memory for arrays:
+Local variable references live in stack; actual arrays (via new) are stored on heap. Stack holds pointers; heap holds the data.
 
-How does array rotation work? How is it different from array reversal? Explain with an example.
+Pass‑by‑value in Java:
+Java passes primitive values directly and object references by value (copy of reference). Modifying object fields inside methods affects the original object. Java does not pass by reference.
 
-Describe the differences between break, continue, and return in loops and methods.
+Time complexity: linear vs binary search:
+Linear search scans each element (O(n)); binary search divides sorted array by half per step (O(log n)).
 
-What is the significance of array sorting before applying the two-pointer technique?
+Array edge cases to handle:
 
-📚 🗓️ Week 2: Strings + Recursion
-✅ Strings & StringBuilder – Theory Questions
-What are immutable objects in Java? Why is String immutable while StringBuilder is mutable?
+Null references
 
-Compare performance and thread-safety of String, StringBuilder, and StringBuffer.
+Empty arrays (length == 0)
 
-How does Java handle character encoding? What is Unicode and how does it impact string operations?
+Index out of bounds
 
-Explain the role of StringBuilder in reducing time complexity in repetitive concatenation scenarios.
+Negative indices or oversized values
 
-Why is using + operator in a loop on strings inefficient? Illustrate with a time complexity example.
+Array rotation vs reversal:
+Rotation shifts elements circularly (e.g., left-shift), whereas reversal flips the sequence end-to-end.
 
-✅ Recursion, Subsequence, Palindrome, Backtracking – Theory Questions
-Define recursion. What are its two essential parts? Explain with an example.
+break vs continue vs return:
 
-What is a stack overflow in recursion? How can it be prevented?
+break exits a loop
 
-What is the difference between direct recursion and indirect recursion? Give examples.
+continue skips to next iteration
 
-Explain the concept of backtracking. How is it different from brute force?
+return exits the current method immediately
 
-Describe the time complexity of recursive approaches for subsequence generation and N-Queens. Why do these problems grow exponentially?
+Why sorting before two-pointers?
+Two-pointer logic often relies on ascending order to increment or decrement pointers toward the target.
+
+📘 Week 2 – Strings, Recursion, Backtracking: Theory Q&A
+Immutable vs Mutable objects in Java:
+String is immutable—modifications create new objects. StringBuilder is mutable—efficient in-place operations. Thread-safe StringBuffer is slower than StringBuilder.
+
+Performance & thread safety:
+String is immutable and inherently thread-safe; StringBuilder is mutable and fast but not thread-safe; StringBuffer is thread-safe but slower due to synchronization.
+
+Character encoding & Unicode:
+Java uses UTF-16 internally for char and String types, allowing global character representation beyond ASCII.
+
+Why StringBuilder over String concat in loops:
+Using String + inside loops leads to O(n²) time and many intermediate objects. StringBuilder appends in-place efficiently (O(n)).
+
+Why + operator in loops is inefficient:
+String concatenation creates new objects each time. Using StringBuilder avoids this overhead.
+
+Define recursion:
+Recursion is when a method calls itself. Two essential parts:
+
+Base case (when to stop)
+
+Recursive case (calls itself moving closer to base case)
+
+What causes StackOverflowError in recursion:
+Occurs when recursion depth is too deep or infinite. Each call consumes stack space; overshooting limit causes overflow. Avoid by limiting depth, using iteration, memoization, or tail recursion optimization 
+
+**Direct vs indirect recursion:**
+Direct: A() calls itself.
+Indirect: A() calls B(), which calls A(), and so on.
+
+Backtracking vs brute force:
+Backtracking explores possibilities and prunes invalid branches early; brute force tries all permutations regardless of validity. Efficient for problems like N‑Queens.
+
+Time complexity for subsequence generation & N‑Queens:
+Generating all subsequences: O(2ⁿ) time and O(n) auxiliary space due to recursion depth 
+
+. N‑Queens also grows exponentially (approx O(n!) or high branching factor dependent).
