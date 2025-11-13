@@ -1,11 +1,12 @@
-using System;
+  using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 
 class Program
 {
+    // HttpClient is thread-safe, reuse for all requests
     private static readonly HttpClient httpClient = new HttpClient();
 
     static async Task Main()
@@ -21,11 +22,75 @@ class Program
 
         httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0");
 
-        Console.WriteLine("\n=== Method 1: Async + Task.WhenAll ===");
-        await RunAsyncTaskWhenAll(urls);
+        Console.WriteLine("\n=== Parallel.ForEachAsync (Optimized with ConcurrentBag) ===");
+        await RunUsingParallelForEachAsync(urls);
+    }
 
-        Console.WriteLine("\n=== Method 2: TaskFactory.StartNew ===");
-        await RunUsingTaskFactory(urls);
+    // ✅ Using Parallel.ForEachAsync with ConcurrentBag (Thread-safe, no locks)
+    private static async Task RunUsingParallelForEachAsync(List<string> urls)
+    {
+        var results = new ConcurrentBag<UrlResult>();
+
+        await Parallel.ForEachAsync(urls, new ParallelOptions { MaxDegreeOfParallelism = 5 }, async (url, ct) =>
+        {
+            var result = await FetchUrlAsync(url);
+            results.Add(result);
+        });
+
+        Console.WriteLine("\n=== Results ===");
+        foreach (var res in results)
+        {
+            Console.WriteLine($"{res.Url,-40} => {res.Status,-8} | {res.Message}");
+        }
+    }
+
+    // Common reusable fetch method
+    private static async Task<UrlResult> FetchUrlAsync(string url)
+    {
+        try
+        {
+            var response = await httpClient.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                return new UrlResult
+                {
+                    Url = url,
+                    Status = "Success",
+                    Message = $"Length={content.Length}"
+                };
+            }
+            else
+            {
+                return new UrlResult
+                {
+                    Url = url,
+                    Status = "Failed",
+                    Message = $"HTTP {(int)response.StatusCode}"
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            return new UrlResult
+            {
+                Url = url,
+                Status = "Error",
+                Message = ex.Message.Split('\n')[0]
+            };
+        }
+    }
+}
+
+// Thread-safe result container
+public class UrlResult
+{
+    public string Url { get; set; }
+    public string Status { get; set; }
+    public string Message { get; set; }
+}
+      await RunUsingTaskFactory(urls);
 
         Console.WriteLine("\n=== Method 3: Parallel.ForEachAsync ===");
         await RunUsingParallelForEachAsync(urls);
